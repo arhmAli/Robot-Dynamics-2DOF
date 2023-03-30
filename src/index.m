@@ -5,19 +5,19 @@ L1 = 3; % Length of first link
 L2 = 3; % Length of second link
 
 % Trajectory Parameters
+%r=1;
 tf=2*pi;
-traj = 0:0.01:tf; % Time vector
-%[x,y,vx,vy,ax,ay]=Circle_Traj(traj(1),tf,tf,0);
- x = cos(traj); % X coordinate of the trajectory
- y = sin(traj); % Y coordinate of the trajectory
- vx = -sin(traj); % X velocity of the trajectory
- vy = cos(traj); % Y velocity of the trajectory
- ax = -cos(traj); % X acceleration of the trajectory
- ay = -sin(traj); % Y acceleration of the trajectory
+traj = 0:0.02:tf; % Time vector
+%  x = cos(traj); % X coordinate of the trajectory
+%  y = sin(traj); % Y coordinate of the trajectory
+%  vx = -sin(traj); % X velocity of the trajectory
+%  vy = cos(traj); % Y velocity of the trajectory
+%  ax = -cos(traj); % X acceleration of the trajectory
+%  ay = -sin(traj); % Y acceleration of the trajectory
 
 % Simulation Parameters
 dt = traj(2)-traj(1); % Time step
-q0 = [-pi/6; pi/6]; % Initial joint angles
+q0 = [-pi; pi/4]; % Initial joint angles
 q_dot0 = [0; 0]; % Initial joint velocities
 q_ddot0 = [0; 0]; % Initial joint accelerations
 
@@ -35,15 +35,19 @@ ylim([-7, 7]);
 xlabel('X');
 ylabel('Y');
 title('2DOF RR Manipulator Trajectory Following using Inverse Kinematics');
+% for j=1:length(traj)-1
+% end
 for i = 1:length(traj)-1
-    
+    %Trajectory Generation
+    [x(i),y(i),vx(i),vy(i),ax(i),ay(i)]=Circle_Traj(traj(i),tf,tf,0)
     % Desired end-effector position and Jacobian matrix
     [H1,H2,J] = hGen(q, L1, L2);
     angles=InverseKinematics(x(i),y(i));
     p_d = angles
     p_dot_d = J*[vx(i); vy(i)];
-   %//some=([ax(i);ay(i)]-(p_dot_d)'.*[H1;H2].*(p_dot_d));
-    p_ddot_d =J*inv(p_d);
+   endMatrix=(([H1;H2]*(p_dot_d))*transp(p_dot_d));
+   intermediateMatrix=[ax(i);ay(i)]-[endMatrix(2,1) endMatrix(2,2);endMatrix(4,1) endMatrix(4,2)];
+    p_ddot_d =(J*inv(p_d))*intermediateMatrix;
     % Joint torques 
     M = mass_matrix(q, L1, L2);
     V = coriolis_matrix(q, q_dot, L1, L2);
