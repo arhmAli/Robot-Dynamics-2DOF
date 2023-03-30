@@ -10,8 +10,8 @@ a=2;
 b=2;
 x =r*sin(theta_Traj)+a ;
 y = r*cos(theta_Traj)+b;
-vx=2*cos(theta_Traj);
-vy=r*sin(theta_Traj);
-ax=r*cos(theta_Traj);
-ay=-2*sin(theta_Traj);
+vx=r*cos(theta_Traj)+sin(theta_Traj);
+vy=-r*sin(theta_Traj)+cos(theta_Traj);
+ax=-r*sin(theta_Traj)+2*cos(theta_Traj);
+ay=-r*cos(theta_Traj);
 end
